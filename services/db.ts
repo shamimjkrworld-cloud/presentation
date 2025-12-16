@@ -7,6 +7,20 @@ const KEYS = {
   PATIENTS: 'mediconnect_patients'
 };
 
+// Reliable, high-quality professional headshots
+const DOCTOR_IMAGES = [
+  'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?q=80&w=400&auto=format&fit=crop', // Male
+  'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=400&auto=format&fit=crop', // Female
+  'https://images.unsplash.com/photo-1537368910025-700350fe46c7?q=80&w=400&auto=format&fit=crop', // Male
+  'https://images.unsplash.com/photo-1594824476967-48c8b964273f?q=80&w=400&auto=format&fit=crop', // Female
+  'https://images.unsplash.com/photo-1622253692010-333f2da6031d?q=80&w=400&auto=format&fit=crop', // Male
+  'https://images.unsplash.com/photo-1614608682850-e0d6ed316d47?q=80&w=400&auto=format&fit=crop', // Female
+  'https://images.unsplash.com/photo-1582752948679-17fa05ad4014?q=80&w=400&auto=format&fit=crop', // Male
+  'https://images.unsplash.com/photo-1651008325506-71d380891623?q=80&w=400&auto=format&fit=crop', // Female
+  'https://images.unsplash.com/photo-1612531386530-97286d97c2d2?q=80&w=400&auto=format&fit=crop', // Male
+  'https://images.unsplash.com/photo-1527613426441-4da17471b66d?q=80&w=400&auto=format&fit=crop', // Female
+];
+
 // Initial Seed Data (Simulating a fresh DB install)
 const generateDoctors = (): Doctor[] => {
   const specs = ['Cardiology', 'Dermatology', 'Neurology', 'Pediatrics', 'General Physician', 'Orthopedics'];
@@ -16,14 +30,14 @@ const generateDoctors = (): Doctor[] => {
     email: `doctor${i + 1}@example.com`,
     role: UserRole.DOCTOR,
     specialization: specs[i % specs.length],
-    experience: Math.floor(Math.random() * 20) + 2,
+    experience: Math.floor(Math.random() * 20) + 5,
     rating: Number((4 + Math.random()).toFixed(1)),
     reviewCount: Math.floor(Math.random() * 500) + 50,
-    consultationFee: Math.floor(Math.random() * 100) + 30,
-    available: Math.random() > 0.3,
-    hospital: ['City Heart Institute', 'General Hospital', 'Kids Care Center', 'Ortho Clinic'][i % 4],
-    about: 'Experienced specialist dedicated to providing top-quality healthcare services.',
-    avatar: `https://picsum.photos/200/200?random=${i + 100}`
+    consultationFee: Math.floor(Math.random() * 100) + 50,
+    available: Math.random() > 0.2,
+    hospital: ['City Heart Institute', 'General Hospital', 'Kids Care Center', 'Ortho Clinic', 'Metropolitan Health'][i % 5],
+    about: `Dr. ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones'][i % 5]} is a highly skilled ${specs[i % specs.length]} with over ${Math.floor(Math.random() * 20) + 5} years of experience in diagnosing and treating complex conditions. Completed residency at Johns Hopkins and is dedicated to patient-centered care.`,
+    avatar: DOCTOR_IMAGES[i % DOCTOR_IMAGES.length]
   }));
 };
 

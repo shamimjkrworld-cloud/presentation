@@ -4,10 +4,11 @@ import { Star, MapPin, Clock, DollarSign } from 'lucide-react';
 
 interface DoctorListProps {
   onBook: (doctor: Doctor) => void;
+  onViewDoctor: (doctor: Doctor) => void;
   doctors: Doctor[];
 }
 
-const DoctorList: React.FC<DoctorListProps> = ({ onBook, doctors }) => {
+const DoctorList: React.FC<DoctorListProps> = ({ onBook, onViewDoctor, doctors }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('All');
 
@@ -51,12 +52,15 @@ const DoctorList: React.FC<DoctorListProps> = ({ onBook, doctors }) => {
       {/* Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredDoctors.map(doctor => (
-          <div key={doctor.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-slate-100 flex flex-col">
-            <div className="p-6 flex-1">
+          <div key={doctor.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow border border-slate-100 flex flex-col group">
+            <div 
+                className="p-6 flex-1 cursor-pointer"
+                onClick={() => onViewDoctor(doctor)}
+            >
               <div className="flex items-center mb-4">
-                <img className="h-16 w-16 rounded-full object-cover border-2 border-brand-100" src={doctor.avatar} alt={doctor.name} />
+                <img className="h-16 w-16 rounded-full object-cover border-2 border-brand-100 group-hover:scale-110 transition-transform" src={doctor.avatar} alt={doctor.name} />
                 <div className="ml-4">
-                  <h3 className="text-lg font-bold text-slate-900">{doctor.name}</h3>
+                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{doctor.name}</h3>
                   <p className="text-sm text-brand-600 font-medium">{doctor.specialization}</p>
                 </div>
               </div>
@@ -85,12 +89,18 @@ const DoctorList: React.FC<DoctorListProps> = ({ onBook, doctors }) => {
               </p>
             </div>
             
-            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100">
+            <div className="bg-slate-50 px-6 py-4 border-t border-slate-100 flex gap-2">
+              <button
+                onClick={() => onViewDoctor(doctor)}
+                className="flex-1 bg-white border border-slate-300 text-slate-700 py-2 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+              >
+                View Profile
+              </button>
               <button
                 onClick={() => onBook(doctor)}
-                className="w-full bg-brand-600 text-white py-2 rounded-lg font-medium hover:bg-brand-700 transition-colors"
+                className="flex-1 bg-brand-600 text-white py-2 rounded-lg font-medium hover:bg-brand-700 transition-colors"
               >
-                Book Appointment
+                Book
               </button>
             </div>
           </div>

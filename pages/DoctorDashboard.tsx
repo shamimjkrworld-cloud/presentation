@@ -67,7 +67,8 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
       setShowPrescriptionPreview(true);
   };
 
-  const Overview = () => (
+  // Helper Render Functions (Converted from Components to avoid re-mounting on state change)
+  const renderOverview = () => (
       <div className="animate-fade-in">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
@@ -107,7 +108,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
       </div>
   );
 
-  const CalendarView = () => (
+  const renderCalendarView = () => (
       <div className="animate-fade-in bg-white p-6 rounded-xl shadow-sm border border-slate-200">
           <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
               <CalendarIcon className="mr-2 h-5 w-5"/> {monthName} {today.getFullYear()}
@@ -159,7 +160,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
       </div>
   );
 
-  const AddPatientView = () => (
+  const renderAddPatientView = () => (
       <div className="animate-fade-in max-w-2xl">
           <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
               <h2 className="text-xl font-bold text-slate-800 mb-6 flex items-center">
@@ -173,7 +174,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
                         type="text" 
                         value={newPatient.name}
                         onChange={e => setNewPatient({...newPatient, name: e.target.value})}
-                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500" 
+                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500 p-2 border" 
                         placeholder="e.g. John Doe"
                       />
                   </div>
@@ -184,7 +185,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
                         type="tel" 
                         value={newPatient.phone}
                         onChange={e => setNewPatient({...newPatient, phone: e.target.value})}
-                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500" 
+                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500 p-2 border" 
                         placeholder="+1 234..."
                       />
                   </div>
@@ -194,7 +195,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
                         rows={3}
                         value={newPatient.symptoms}
                         onChange={e => setNewPatient({...newPatient, symptoms: e.target.value})}
-                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500" 
+                        className="w-full border-slate-300 rounded-lg shadow-sm focus:ring-brand-500 focus:border-brand-500 p-2 border" 
                         placeholder="Describe initial symptoms..."
                       />
                   </div>
@@ -221,7 +222,7 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
       </div>
   );
 
-  const PrescriptionView = () => (
+  const renderPrescriptionView = () => (
       <div className="animate-fade-in grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Form */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
@@ -380,10 +381,10 @@ const DoctorDashboard: React.FC<DoctorDashboardProps> = ({ appointments = [], pa
           <button onClick={() => setActiveTab('prescriptions')} className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'prescriptions' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}>Prescriptions</button>
       </div>
 
-      {activeTab === 'overview' && <Overview />}
-      {activeTab === 'calendar' && <CalendarView />}
-      {activeTab === 'patients' && <AddPatientView />}
-      {activeTab === 'prescriptions' && <PrescriptionView />}
+      {activeTab === 'overview' && renderOverview()}
+      {activeTab === 'calendar' && renderCalendarView()}
+      {activeTab === 'patients' && renderAddPatientView()}
+      {activeTab === 'prescriptions' && renderPrescriptionView()}
     </div>
   );
 };

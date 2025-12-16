@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import DoctorList from './pages/DoctorList';
+import DoctorProfile from './pages/DoctorProfile';
 import SymptomChecker from './pages/SymptomChecker';
 import DoctorDashboard from './pages/DoctorDashboard';
 import AdminDashboard from './pages/AdminDashboard';
@@ -21,7 +22,9 @@ const App: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [patients, setPatients] = useState<Patient[]>([]);
 
-  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  // Navigation State
+  const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null); // For booking modal
+  const [viewingDoctor, setViewingDoctor] = useState<Doctor | null>(null); // For profile page
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [activeCall, setActiveCall] = useState(false);
 
@@ -69,6 +72,11 @@ const App: React.FC = () => {
   const handleLogout = () => {
     setUserRole(UserRole.GUEST);
     navigate('home');
+  };
+
+  const handleViewDoctor = (doctor: Doctor) => {
+    setViewingDoctor(doctor);
+    navigate('doctor-profile');
   };
 
   const handleBookDoctor = (doctor: Doctor) => {
@@ -186,9 +194,27 @@ const App: React.FC = () => {
         currentPage={currentPage}
       />
 
-      {currentPage === 'home' && <Home navigate={navigate} doctors={doctors} />}
+      {currentPage === 'home' && <Home navigate={navigate} doctors={doctors} onViewDoctor={handleViewDoctor} />}
       {currentPage === 'login' && <Login onLoginSuccess={handleAuthSuccess} />}
-      {currentPage === 'doctors' && <DoctorList doctors={doctors} onBook={handleBookDoctor} />}
+      
+      {/* List Page */}
+      {currentPage === 'doctors' && (
+        <DoctorList 
+          doctors={doctors} 
+          onBook={handleBookDoctor} 
+          onViewDoctor={handleViewDoctor} 
+        />
+      )}
+      
+      {/* Profile Page */}
+      {currentPage === 'doctor-profile' && viewingDoctor && (
+        <DoctorProfile 
+          doctor={viewingDoctor} 
+          onBook={handleBookDoctor} 
+          onBack={() => navigate('doctors')} 
+        />
+      )}
+
       {currentPage === 'symptom-checker' && <SymptomChecker />}
       
       {currentPage === 'doctor-dashboard' && (

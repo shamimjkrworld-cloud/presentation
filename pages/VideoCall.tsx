@@ -43,7 +43,7 @@ const VideoCall: React.FC<VideoCallProps> = ({ onEndCall }) => {
         {/* Remote Video (Doctor) - Mocked with image for this demo as we don't have peer connection */}
         <div className="relative w-full h-full max-w-5xl bg-black rounded-2xl overflow-hidden shadow-2xl">
           <img 
-            src="https://picsum.photos/1280/720?random=1" 
+            src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=1280&q=80" 
             className="w-full h-full object-cover opacity-90" 
             alt="Remote Doctor"
           />

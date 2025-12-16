@@ -5,9 +5,10 @@ import { Doctor } from '../types';
 interface HomeProps {
   navigate: (page: string) => void;
   doctors?: Doctor[];
+  onViewDoctor: (doctor: Doctor) => void;
 }
 
-const Home: React.FC<HomeProps> = ({ navigate, doctors = [] }) => {
+const Home: React.FC<HomeProps> = ({ navigate, doctors = [], onViewDoctor }) => {
   const specialties = [
     { name: 'General Physician', icon: '🩺', count: '120+' },
     { name: 'Cardiology', icon: '❤️', count: '45+' },
@@ -58,15 +59,16 @@ const Home: React.FC<HomeProps> = ({ navigate, doctors = [] }) => {
           </div>
         </div>
         <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+          {/* Changed to a very reliable medical team image */}
           <img
             className="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full"
-            src="https://picsum.photos/800/600"
-            alt="Doctor consultation"
+            src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?q=80&w=2070&auto=format&fit=crop"
+            alt="Doctor Team"
           />
         </div>
       </div>
 
-      {/* Search Bar Placeholder (as per req, below hero) */}
+      {/* Search Bar Placeholder */}
       <div className="bg-white py-8 border-b border-slate-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl shadow-lg border border-slate-100 -mt-16 relative z-20">
@@ -86,7 +88,7 @@ const Home: React.FC<HomeProps> = ({ navigate, doctors = [] }) => {
                 {topDoctors.map((doc) => (
                     <div 
                         key={doc.id} 
-                        onClick={() => navigate('doctors')} 
+                        onClick={() => onViewDoctor(doc)} 
                         className="bg-white rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-slate-100 group"
                     >
                         <div className="h-48 overflow-hidden">

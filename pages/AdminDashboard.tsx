@@ -51,7 +51,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ doctors, onAddDoctor, o
         rating: 5.0,
         reviewCount: 0,
         about: 'Newly added doctor',
-        avatar: 'https://picsum.photos/200/200?random=' + Date.now(),
+        // Default professional avatar
+        avatar: 'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&h=300&q=80',
         ...formData as any
       };
       onAddDoctor(newDoc);
@@ -124,29 +125,29 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ doctors, onAddDoctor, o
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-slate-700">Name</label>
-                <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
+                <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.name || ''} onChange={e => setFormData({...formData, name: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Email</label>
-                <input required type="email" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
+                <input required type="email" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.email || ''} onChange={e => setFormData({...formData, email: e.target.value})} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                  <div>
                     <label className="block text-sm font-medium text-slate-700">Specialization</label>
-                    <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.specialization} onChange={e => setFormData({...formData, specialization: e.target.value})} />
+                    <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.specialization || ''} onChange={e => setFormData({...formData, specialization: e.target.value})} />
                  </div>
                  <div>
                     <label className="block text-sm font-medium text-slate-700">Experience (Years)</label>
-                    <input required type="number" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.experience} onChange={e => setFormData({...formData, experience: Number(e.target.value)})} />
+                    <input required type="number" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.experience || 0} onChange={e => setFormData({...formData, experience: Number(e.target.value)})} />
                  </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Hospital</label>
-                <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.hospital} onChange={e => setFormData({...formData, hospital: e.target.value})} />
+                <input required type="text" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.hospital || ''} onChange={e => setFormData({...formData, hospital: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-slate-700">Consultation Fee ($)</label>
-                <input required type="number" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.consultationFee} onChange={e => setFormData({...formData, consultationFee: Number(e.target.value)})} />
+                <input required type="number" className="mt-1 block w-full border border-slate-300 rounded-md shadow-sm p-2" value={formData.consultationFee || 0} onChange={e => setFormData({...formData, consultationFee: Number(e.target.value)})} />
               </div>
 
               <div className="pt-4 flex justify-end space-x-3">

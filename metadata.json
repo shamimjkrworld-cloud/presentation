@@ -1,0 +1,8 @@
+{
+  "name": "MediConnect - AI Powered Telemedicine",
+  "description": "A comprehensive telemedicine platform connecting patients with top specialists via secure video consultations, featuring an AI-powered symptom checker.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

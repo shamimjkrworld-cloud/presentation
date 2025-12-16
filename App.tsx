@@ -8,80 +8,41 @@ import AdminDashboard from './pages/AdminDashboard';
 import VideoCall from './pages/VideoCall';
 import Login from './pages/Login';
 import { UserRole, Doctor, Appointment, Patient } from './types';
-import { Calendar, CheckCircle } from 'lucide-react';
-
-// Initial Mock Data Generation
-const generateDoctors = (): Doctor[] => {
-  const specs = ['Cardiology', 'Dermatology', 'Neurology', 'Pediatrics', 'General Physician', 'Orthopedics'];
-  return Array.from({ length: 20 }).map((_, i) => ({
-    id: `doc-${i + 1}`,
-    name: `Dr. ${['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'][i % 10]} ${String.fromCharCode(65 + i)}`,
-    email: `doctor${i + 1}@example.com`,
-    role: UserRole.DOCTOR,
-    specialization: specs[i % specs.length],
-    experience: Math.floor(Math.random() * 20) + 2,
-    rating: Number((4 + Math.random()).toFixed(1)),
-    reviewCount: Math.floor(Math.random() * 500) + 50,
-    consultationFee: Math.floor(Math.random() * 100) + 30,
-    available: Math.random() > 0.3,
-    hospital: ['City Heart Institute', 'General Hospital', 'Kids Care Center', 'Ortho Clinic'][i % 4],
-    about: 'Experienced specialist dedicated to providing top-quality healthcare services.',
-    avatar: `https://picsum.photos/200/200?random=${i + 100}`
-  }));
-};
-
-const INITIAL_DOCTORS = generateDoctors();
-const INITIAL_APPOINTMENTS: Appointment[] = [
-  {
-    id: 'appt-1',
-    doctorId: 'doc-1',
-    doctorName: 'Dr. Smith A',
-    doctorSpecialization: 'Cardiology',
-    patientId: 'pat-1',
-    patientName: 'Jane Doe',
-    date: new Date().toISOString().split('T')[0],
-    time: '10:00 AM',
-    status: 'UPCOMING',
-    type: 'VIDEO'
-  },
-  {
-    id: 'appt-2',
-    doctorId: 'doc-1',
-    doctorName: 'Dr. Smith A',
-    doctorSpecialization: 'Cardiology',
-    patientId: 'pat-2',
-    patientName: 'John Smith',
-    date: new Date().toISOString().split('T')[0],
-    time: '11:00 AM',
-    status: 'UPCOMING',
-    type: 'VIDEO'
-  },
-  {
-    id: 'appt-3',
-    doctorId: 'doc-1',
-    doctorName: 'Dr. Smith A',
-    doctorSpecialization: 'Cardiology',
-    patientId: 'pat-3',
-    patientName: 'Alice Johnson',
-    date: '2023-10-28', // Example past date
-    time: '09:00 AM',
-    status: 'COMPLETED',
-    type: 'VIDEO'
-  }
-];
+import { Calendar, CheckCircle, Loader2 } from 'lucide-react';
+import { db } from './services/db';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState('home');
   const [userRole, setUserRole] = useState<UserRole>(UserRole.GUEST);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Global State for CRUD
-  const [doctors, setDoctors] = useState<Doctor[]>(INITIAL_DOCTORS);
-  const [appointments, setAppointments] = useState<Appointment[]>(INITIAL_APPOINTMENTS);
-  const [patients, setPatients] = useState<Patient[]>([]); // Manually added patients
+  // Global State (Synced with "DB")
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
 
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [activeCall, setActiveCall] = useState(false);
+
+  // --- Initialization (Simulating DB Connection) ---
+  useEffect(() => {
+    const loadData = () => {
+      db.init(); // Ensure DB is seeded
+      setDoctors(db.getDoctors());
+      setAppointments(db.getAppointments());
+      setPatients(db.getPatients());
+      setIsLoading(false);
+    };
+    loadData();
+  }, []);
+
+  // --- Persistence Wrappers ---
+  // Whenever state changes, we sync to our "DB"
+  useEffect(() => { if (!isLoading) db.saveDoctors(doctors); }, [doctors, isLoading]);
+  useEffect(() => { if (!isLoading) db.saveAppointments(appointments); }, [appointments, isLoading]);
+  useEffect(() => { if (!isLoading) db.savePatients(patients); }, [patients, isLoading]);
+
 
   // Simple Router
   const navigate = (page: string) => {
@@ -90,9 +51,7 @@ const App: React.FC = () => {
   };
 
   const handleLogin = (role: UserRole) => {
-    // Navigate to Login page for Doctor/Patient
     if (role === UserRole.DOCTOR || role === UserRole.ADMIN) {
-        // Set temp role to guide login page, or just go to login
         navigate('login');
     } else {
         setUserRole(role);
@@ -123,33 +82,43 @@ const App: React.FC = () => {
 
   const confirmBooking = () => {
     setShowBookingModal(false);
-    // Add to appointments state
     const newAppt: Appointment = {
         id: `appt-${Date.now()}`,
         doctorId: selectedDoctor!.id,
         doctorName: selectedDoctor!.name,
         doctorSpecialization: selectedDoctor!.specialization,
         patientId: 'current-user',
-        patientName: 'Current User', // In real app, from user context
+        patientName: 'Current User', 
         date: new Date().toISOString().split('T')[0],
-        time: '02:00 PM', // Mock time
+        time: '02:00 PM', 
         status: 'UPCOMING',
         type: 'VIDEO'
     };
+    // This will trigger the useEffect to save to DB
     setAppointments([...appointments, newAppt]);
     navigate('patient-dashboard');
     alert(`Appointment confirmed with ${selectedDoctor?.name}`);
   };
 
-  // CRUD Operations for Admin
-  const handleAddDoctor = (doc: Doctor) => setDoctors([...doctors, doc]);
-  const handleUpdateDoctor = (doc: Doctor) => setDoctors(doctors.map(d => d.id === doc.id ? doc : d));
-  const handleDeleteDoctor = (id: string) => setDoctors(doctors.filter(d => d.id !== id));
+  // --- CRUD Operations (Admin) ---
+  const handleAddDoctor = (doc: Doctor) => {
+    setDoctors(prev => [...prev, doc]);
+  };
+  
+  const handleUpdateDoctor = (updatedDoc: Doctor) => {
+    setDoctors(prev => prev.map(d => d.id === updatedDoc.id ? updatedDoc : d));
+  };
+  
+  const handleDeleteDoctor = (id: string) => {
+    setDoctors(prev => prev.filter(d => d.id !== id));
+  };
 
-  // Operations for Doctor
-  const handleAddPatient = (pat: Patient) => setPatients([...patients, pat]);
+  // --- CRUD Operations (Doctor) ---
+  const handleAddPatient = (pat: Patient) => {
+    setPatients(prev => [...prev, pat]);
+  };
 
-  // Patient Dashboard Component (Inline)
+  // Patient Dashboard Component
   const PatientDashboard = () => (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
        <h1 className="text-2xl font-bold text-slate-900 mb-6">Patient Dashboard</h1>
@@ -199,6 +168,10 @@ const App: React.FC = () => {
     </div>
   );
 
+  if (isLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50"><Loader2 className="h-10 w-10 text-brand-600 animate-spin" /></div>;
+  }
+
   if (activeCall) {
       return <VideoCall onEndCall={() => setActiveCall(false)} />;
   }
@@ -207,7 +180,7 @@ const App: React.FC = () => {
     <div className="min-h-screen bg-slate-50 font-sans">
       <Navbar 
         userRole={userRole} 
-        onLogin={handleLogin} // Passes role, used to trigger login navigation
+        onLogin={handleLogin} 
         onLogout={handleLogout}
         navigate={navigate}
         currentPage={currentPage}
